@@ -28,7 +28,7 @@ var _ = registerResource("gitlab_group_hook", func() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"group": {
-				Description: "The name or id of the group to add the hook to.",
+				Description: "The path or id of the group to add the hook to.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

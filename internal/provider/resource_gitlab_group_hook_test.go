@@ -22,7 +22,8 @@ func TestAccGitlabGroupHook_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create a group and hook with default options
 			{
-				Config: testAccGitlabGroupHookConfig(rInt),
+				SkipFunc: isRunningInCE,
+				Config:   testAccGitlabGroupHookConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGitlabGroupHookExists("gitlab_group_hook.foo", &hook),
 					testAccCheckGitlabGroupHookAttributes(&hook, &testAccGitlabGroupHookExpectedAttributes{
@@ -34,7 +35,8 @@ func TestAccGitlabGroupHook_basic(t *testing.T) {
 			},
 			// Update the group hook to toggle all the values to their inverse
 			{
-				Config: testAccGitlabGroupHookUpdateConfig(rInt),
+				SkipFunc: isRunningInCE,
+				Config:   testAccGitlabGroupHookUpdateConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGitlabGroupHookExists("gitlab_group_hook.foo", &hook),
 					testAccCheckGitlabGroupHookAttributes(&hook, &testAccGitlabGroupHookExpectedAttributes{
@@ -59,7 +61,8 @@ func TestAccGitlabGroupHook_basic(t *testing.T) {
 			},
 			// Update the group hook to toggle the options back
 			{
-				Config: testAccGitlabGroupHookConfig(rInt),
+				SkipFunc: isRunningInCE,
+				Config:   testAccGitlabGroupHookConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGitlabGroupHookExists("gitlab_group_hook.foo", &hook),
 					testAccCheckGitlabGroupHookAttributes(&hook, &testAccGitlabGroupHookExpectedAttributes{
@@ -71,6 +74,7 @@ func TestAccGitlabGroupHook_basic(t *testing.T) {
 			},
 			// Verify import
 			{
+				SkipFunc:                isRunningInCE,
 				ResourceName:            "gitlab_group_hook.foo",
 				ImportStateIdFunc:       getGroupHookImportID("gitlab_group_hook.foo"),
 				ImportState:             true,

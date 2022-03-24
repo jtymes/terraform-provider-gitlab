@@ -154,7 +154,7 @@ func resourceGitlabGroupHookCreate(ctx context.Context, d *schema.ResourceData, 
 		WikiPageEvents:           gitlab.Bool(d.Get("wiki_page_events").(bool)),
 		DeploymentEvents:         gitlab.Bool(d.Get("deployment_events").(bool)),
 		ReleasesEvents:           gitlab.Bool(d.Get("releases_events").(bool)),
-		SubGroupEvents:           gitlab.Bool(d.Get("subgroup_events").(bool)),
+		SubgroupEvents:           gitlab.Bool(d.Get("subgroup_events").(bool)),
 		EnableSSLVerification:    gitlab.Bool(d.Get("enable_ssl_verification").(bool)),
 	}
 
@@ -208,7 +208,7 @@ func resourceGitlabGroupHookRead(ctx context.Context, d *schema.ResourceData, me
 	d.Set("wiki_page_events", hook.WikiPageEvents)
 	d.Set("deployment_events", hook.DeploymentEvents)
 	d.Set("releases_events", hook.ReleasesEvents)
-	d.Set("subgroup_events", hook.SubGroupEvents)
+	d.Set("subgroup_events", hook.SubgroupEvents)
 	d.Set("enable_ssl_verification", hook.EnableSSLVerification)
 	return nil
 }
@@ -235,7 +235,7 @@ func resourceGitlabGroupHookUpdate(ctx context.Context, d *schema.ResourceData, 
 		WikiPageEvents:           gitlab.Bool(d.Get("wiki_page_events").(bool)),
 		DeploymentEvents:         gitlab.Bool(d.Get("deployment_events").(bool)),
 		ReleasesEvents:           gitlab.Bool(d.Get("releases_events").(bool)),
-		SubGroupEvents:           gitlab.Bool(d.Get("subgroup_events").(bool)),
+		SubgroupEvents:           gitlab.Bool(d.Get("subgroup_events").(bool)),
 		EnableSSLVerification:    gitlab.Bool(d.Get("enable_ssl_verification").(bool)),
 	}
 

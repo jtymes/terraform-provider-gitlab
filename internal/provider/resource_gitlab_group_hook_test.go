@@ -187,8 +187,8 @@ func testAccCheckGitlabGroupHookAttributes(hook *gitlab.GroupHook, want *testAcc
 			return fmt.Errorf("got releases_events %t; want %t", hook.ReleasesEvents, want.ReleasesEvents)
 		}
 
-		if hook.SubGroupEvents != want.SubGroupEvents {
-			return fmt.Errorf("got subgroup_events %t; want %t", hook.SubGroupEvents, want.SubGroupEvents)
+		if hook.SubgroupEvents != want.SubGroupEvents {
+			return fmt.Errorf("got subgroup_events %t; want %t", hook.SubgroupEvents, want.SubGroupEvents)
 		}
 
 		return nil
@@ -197,16 +197,24 @@ func testAccCheckGitlabGroupHookAttributes(hook *gitlab.GroupHook, want *testAcc
 
 func testAccCheckGitlabGroupHookDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "gitlab_group" {
+		if rs.Type != "gitlab_group_hook" {
 			continue
 		}
 
-		gotRepo, _, err := testGitlabClient.Groups.GetGroup(rs.Primary.ID, nil)
+		hookID, err := strconv.Atoi(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		groupID := rs.Primary.Attributes["group"]
+		if groupID == "" {
+			return fmt.Errorf("No group ID is set")
+		}
+
+		groupHook, _, err := testGitlabClient.Groups.GetGroupHook(groupID, hookID)
 		if err == nil {
-			if gotRepo != nil && fmt.Sprintf("%d", gotRepo.ID) == rs.Primary.ID {
-				if gotRepo.MarkedForDeletionAt == nil {
-					return fmt.Errorf("Repository still exists")
-				}
+			if groupHook != nil {
+				return fmt.Errorf("Group hook still exists")
 			}
 		}
 		if !is404(err) {
@@ -240,6 +248,7 @@ func testAccGitlabGroupHookConfig(rInt int) string {
 	return fmt.Sprintf(`
 resource "gitlab_group" "foo" {
   name = "foo-%d"
+  path = "foo-path-%d"
   description = "Terraform acceptance tests"
 
   # So that acceptance tests can be run in a gitlab organization
@@ -249,9 +258,9 @@ resource "gitlab_group" "foo" {
 
 resource "gitlab_group_hook" "foo" {
   group = "${gitlab_group.foo.id}"
-  url = "https://example.com/hook-%d"
+  url = "https://example.com/group-hook-%d"
 }
-	`, rInt, rInt)
+	`, rInt, rInt, rInt)
 }
 
 func testAccGitlabGroupHookUpdateConfig(rInt int) string {
@@ -268,7 +277,7 @@ resource "gitlab_group" "foo" {
 
 resource "gitlab_group_hook" "foo" {
   group = "${gitlab_group.foo.id}"
-  url = "https://example.com/hook-%d"
+  url = "https://example.com/group-hook-%d"
   enable_ssl_verification = false
   push_events = true
   push_events_branch_filter = "devel"
@@ -285,5 +294,5 @@ resource "gitlab_group_hook" "foo" {
   releases_events = true
   subgroup_events = true
 }
-	`, rInt, rInt)
+	`, rInt, rInt, rInt)
 }
